@@ -39,7 +39,7 @@ RUN chown -R app:app $HOME
 
 # change to the app user
 # Switch to a non-root user, which is recommended by Heroku.
-USER root
+USER app
 
 # Run the run script, it will check for an /app/prestart.sh script (e.g. for migrations)
 # And then will start Uvicorn
