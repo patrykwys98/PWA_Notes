@@ -3,4 +3,4 @@ venv
 env
 .dockerignore
 Dockerfile
-frontend/
+frontend/§
