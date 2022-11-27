@@ -1,9 +1,9 @@
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
-Base = declarative_base()
+from app.models.base import Base
+
 
 class Note(Base):
     __tablename__ = 'note'
@@ -16,8 +16,3 @@ class Note(Base):
     notebook = relationship("Notebook")
 
 
-class Notebook(Base):
-    __tablename__ = 'notebook'
-    title = Column(String)
-    time_created = Column(DateTime(timezone=True), server_default=func.now())
-    time_updated = Column(DateTime(timezone=True), onupdate=func.now())
