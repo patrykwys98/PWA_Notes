@@ -1,1 +1,1 @@
-web: alembic upgrade head && cd app && uvicorn --host 0.0.0.0 --port $PORT main:app
+web: gunicorn -w 4 -k uvicorn.workers.UvicornWorker app.main:app
