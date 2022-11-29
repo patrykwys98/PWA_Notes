@@ -1,0 +1,21 @@
+from pydantic import BaseModel
+from app.schemas.notebook import NotebookSchema
+
+
+class UserSchema(BaseModel):
+    """
+    User Base Schema
+    """
+    username: str
+    email: str
+    notebooks: list[NotebookSchema] = []
+
+    class Config:
+        orm_mode = True
+
+
+class CreateUserSchema(UserSchema):
+    """
+    Create User Schema
+    """
+    password: str
