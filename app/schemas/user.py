@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+
 from app.schemas.notebook import NotebookSchema
 
 
@@ -8,7 +9,7 @@ class UserSchema(BaseModel):
     """
     username: str
     email: str
-    notebooks: list[NotebookSchema] = []
+    # notebooks: list[NotebookSchema] = []
 
     class Config:
         orm_mode = True
@@ -17,5 +18,12 @@ class UserSchema(BaseModel):
 class CreateUserSchema(UserSchema):
     """
     Create User Schema
+    """
+    password: str
+
+
+class AuthUserSchema(UserSchema):
+    """
+    Auth user schema (with password)
     """
     password: str
