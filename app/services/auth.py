@@ -31,10 +31,8 @@ def authenticate_user(db, username: str, password: str):
     print(user)
     if not user:
         return False
-    # print(password, user.password)
-    # print(verify_password(password, user.password))
-    # if not verify_password(password, user.password):
-    #     return False
+    if not verify_password(password, user.password):
+        return False
     if password != user.password:
         return False
     return user
