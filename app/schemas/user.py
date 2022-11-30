@@ -7,7 +7,6 @@ class UserSchema(BaseModel):
     """
     User Base Schema
     """
-    username: str
     email: str
     # notebooks: list[NotebookSchema] = []
 

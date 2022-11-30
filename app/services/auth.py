@@ -28,12 +28,9 @@ def get_password_hash(password):
 
 def authenticate_user(db, username: str, password: str):
     user = get_user(db, username)
-    print(user)
     if not user:
         return False
     if not verify_password(password, user.password):
-        return False
-    if password != user.password:
         return False
     return user
 
