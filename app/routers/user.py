@@ -9,8 +9,8 @@ router = APIRouter()
 
 
 @router.post("/users/", response_model=UserSchema)
-def create_user(user: CreateUserSchema, db: Session = Depends(get_db)):
-    db_user = UserService.get_user(db, username=user.email)
+async def create_user(user: CreateUserSchema, db: Session = Depends(get_db)):
+    db_user = await UserService.get_user(db, username=user.email)
     if db_user:
         raise HTTPException(status_code=400, detail="Email already registered")
-    return UserService.create_user(db=db, user=user)
+    return await UserService.create_user(db=db, user=user)

@@ -4,7 +4,7 @@ from app.models.note import Note
 from app.schemas.note import NoteSchema
 
 
-def add_note(db: Session, note: NoteSchema):
+async def add_note(db: Session, note: NoteSchema):
     db_note = Note(title=note.title, content=note.content,
                    notebook_id=note.notebook_id)
     db.add(db_note)

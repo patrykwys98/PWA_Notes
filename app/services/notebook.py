@@ -5,7 +5,7 @@ from app.schemas.notebook import NotebookSchema
 from app.schemas.user import UserSchema
 
 
-def add_notebook(db: Session, notebook: NotebookSchema, user: UserSchema):
+async def add_notebook(db: Session, notebook: NotebookSchema, user: UserSchema):
     db_notebook = Notebook(title=notebook.title, owner_id=user.id)
     db.add(db_notebook)
     db.commit()

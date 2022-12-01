@@ -1,14 +1,17 @@
-from .user import get_user
 from datetime import datetime, timedelta
+
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
+from jose import JWTError, jwt
 from passlib.context import CryptContext
+from sqlalchemy.orm import Session
+
+from app.core.config import settings
+from app.db.get_db import get_db
 from app.schemas.token import TokenData
 from app.schemas.user import AuthUserSchema
-from app.core.config import settings
-from jose import JWTError, jwt
-from app.db.get_db import get_db
-from sqlalchemy.orm import Session
+
+from .user import get_user
 
 SECRET_KEY = settings.SECRET_KEY
 ALGORITHM = settings.ALGORITHM
@@ -26,8 +29,8 @@ def get_password_hash(password):
     return pwd_context.hash(password)
 
 
-def authenticate_user(db, username: str, password: str):
-    user = get_user(db, username)
+async def authenticate_user(db, username: str, password: str):
+    user = await get_user(db, username)
     if not user:
         return False
     if not verify_password(password, user.password):
@@ -60,7 +63,7 @@ async def get_current_user(db: Session = Depends(get_db), token: str = Depends(o
         token_data = TokenData(username=username)
     except JWTError:
         raise credentials_exception
-    user = get_user(db, username=token_data.username)
+    user = await get_user(db, username=token_data.username)
     if user is None:
         raise credentials_exception
     return user

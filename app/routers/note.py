@@ -9,5 +9,5 @@ router = APIRouter()
 
 
 @router.post('/add-note/', response_model=NoteSchema)
-def add_note_endpoint(note: NoteSchema, db: Session = Depends(get_db)):
-    return add_note(db=db, note=note)
+async def add_note_endpoint(note: NoteSchema, db: Session = Depends(get_db)):
+    return await add_note(db=db, note=note)
