@@ -13,4 +13,5 @@ class Notebook(Base):
     time_updated = Column(DateTime(timezone=True), onupdate=func.now())
     owner_id = Column(Integer, ForeignKey("user.id"))
 
-    notes = relationship("Note")
+    owner = relationship("User", back_populates="notebooks")
+    notes = relationship("Note", back_populates="notebook")

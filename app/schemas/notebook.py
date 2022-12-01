@@ -8,6 +8,7 @@ class NotebookSchema(BaseModel):
     Base Notebook Schema
     """
     title: str
+    owner_id: int
     notes: list[NoteSchema] = []
 
     class Config:
