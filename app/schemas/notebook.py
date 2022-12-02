@@ -13,3 +13,14 @@ class NotebookSchema(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class NotebooksSchema(BaseModel):
+    """
+    Notebooks schema
+    """
+    # FIXME
+    notebooks: list[NotebookSchema] = []
+
+    class Config:
+        orm_mode = True
