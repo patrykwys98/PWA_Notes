@@ -21,3 +21,24 @@ async def create_user(db: Session, user: CreateUserSchema):
     db.commit()
     db.refresh(db_user)
     return db_user
+
+
+async def delete_user(db: Session, user_id: int):
+    user = db.query(User).filter(User.id == user_id).first()
+    db.delete(user)
+    db.commit()
+    return user
+
+
+async def update_user(db: Session, user_id: int, user: CreateUserSchema):
+    db_user = db.query(User).filter(User.id == user_id).first()
+    db_user.username = user.email
+    db_user.email = user.email
+    db_user.password = auth.get_password_hash(user.password)
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+
+
+async def get_user_by_id(db: Session, user_id: int):
+    return db.query(User).filter(User.id == user_id).first()

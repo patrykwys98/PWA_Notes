@@ -8,7 +8,7 @@ from app.services import user as UserService
 router = APIRouter()
 
 
-@router.post("/users/", response_model=UserSchema)
+@router.post("/create-user/", response_model=UserSchema)
 async def create_user(user: CreateUserSchema, db: Session = Depends(get_db)):
     db_user = await UserService.get_user(db, username=user.email)
     if db_user:
