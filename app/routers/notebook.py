@@ -54,3 +54,4 @@ async def update_notebook_endpoint(
     user: User = Depends(get_current_user)
 ):
     return await update_notebook(db=db, notebook_id=notebook_id, notebook=notebook, user=user)
+

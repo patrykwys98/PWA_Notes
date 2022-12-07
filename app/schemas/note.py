@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from typing import Any
 
 
 class NoteSchema(BaseModel):
@@ -8,6 +9,7 @@ class NoteSchema(BaseModel):
     title: str
     content: str
     notebook_id: int
+    path: Any = None
 
     class Config:
         orm_mode = True
