@@ -14,4 +14,4 @@ class User(Base):
     time_created = Column(DateTime(timezone=True), server_default=func.now())
     time_updated = Column(DateTime(timezone=True), onupdate=func.now())
 
-    notebooks = relationship('Notebook', back_populates="owner")
+    notes = relationship('Note', back_populates="owner")

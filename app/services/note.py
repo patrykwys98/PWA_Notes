@@ -1,33 +1,37 @@
+from fastapi import HTTPException, status
+from sqlalchemy import and_, func, or_
 from sqlalchemy.orm import Session
 
 from app.models.note import Note
-from app.schemas.note import NoteSchema
-from sqlalchemy_utils import Ltree
+from app.schemas.note import NoteSchema, NotesToTreeSchema
+from app.schemas.user import UserSchema
 
 
-async def add_note(db: Session, note: NoteSchema):
+async def add_note(db: Session, note: NoteSchema, user: UserSchema):
     db_note = Note(title=note.title, content=note.content,
-                   notebook_id=note.notebook_id, path=Ltree(note.path))
+                   child_id=note.child_id, owner_id=user.id)
     db.add(db_note)
     db.commit()
     db.refresh(db_note)
     return db_note
 
 
-async def get_notes(db: Session, notebook_id: int):
-    notes = db.query(Note).filter(Note.notebook_id == notebook_id).all()
-    if not notes:
-        return []
-    return notes
+# async def get_notes(db: Session, ):
+#     notes = db.query(Note).filter().all()
+#     if not notes:
+#         return []
+#     return notes
 
 
-async def get_note(db: Session, note_id: int):
-    note = db.query(Note).filter(Note.id == note_id).first()
+async def get_note(db: Session, note_id: int, user: UserSchema):
+    note = db.query(Note).filter(
+        and_(Note.id == note_id, owner_id=user.id)).first()
     return note
 
 
-async def delete_note(db: Session, note_id: int):
-    note = db.query(Note).filter(Note.id == note_id).first()
+async def delete_note(db: Session, note_id: int, user: UserSchema):
+    note = db.query(Note).filter(
+        and_(Note.id == note_id, user.id == user.id)).first()
     db.delete(note)
     db.commit()
     return note
@@ -37,6 +41,25 @@ async def update_note(db: Session, note_id: int, note: NoteSchema):
     db_note = db.query(Note).filter(Note.id == note_id).first()
     db_note.title = note.title
     db_note.content = note.content
+    db_note.children = note.children
     db.commit()
     db.refresh(db_note)
     return db_note
+
+
+async def get_notes_tree(db: Session, user: UserSchema):
+    notes = db.query(Note).filter(Note.owner_id == user.id).all()
+    notes_to_return = []
+    childs_ids = []
+    if not notes:
+        return []
+    for note in notes:
+        childrens = [child for child in notes if child.child_id == note.id]
+        if childrens:
+            for child in childrens:
+                childs_ids.append(child.id)
+        note.children = childrens
+        if note.id not in childs_ids:
+            notes_to_return.append(note)
+
+    return list(map(lambda x: NotesToTreeSchema.from_orm(x), notes_to_return))

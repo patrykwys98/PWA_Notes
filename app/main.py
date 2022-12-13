@@ -3,7 +3,7 @@ import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.routers import auth, note, notebook, user
+from app.routers import auth, note, user
 
 app = FastAPI()
 app.add_middleware(
@@ -16,7 +16,6 @@ app.add_middleware(
 
 #! Routes
 app.include_router(note.router, tags=['Note'], prefix='/api/note')
-app.include_router(notebook.router, tags=['Notebook'], prefix='/api/notebook')
 app.include_router(user.router, tags=['User'], prefix='/api/user')
 app.include_router(auth.router, tags=['Auth'], prefix='/api/auth')
 

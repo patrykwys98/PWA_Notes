@@ -1,9 +1,9 @@
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
+from sqlalchemy import (Column, DateTime, ForeignKey, Index, Integer, Sequence,
+                        String)
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
-from sqlalchemy_utils import LtreeType
 
-from app.db.database import Base
+from app.db.database import Base, engine
 
 
 class Note(Base):
@@ -13,13 +13,9 @@ class Note(Base):
     content = Column(String)
     time_created = Column(DateTime(timezone=True), server_default=func.now())
     time_updated = Column(DateTime(timezone=True), onupdate=func.now())
-    notebook_id = Column(Integer, ForeignKey("notebook.id"))
-    path = Column(LtreeType, nullable=False)
+    owner_id = Column(Integer, ForeignKey("user.id"))
 
-    notebook = relationship("Notebook", back_populates="notes")
+    child_id = Column(Integer, ForeignKey('note.id'), nullable=True)
+    children = relationship('Note', remote_side=[id], uselist=True)
 
-    def __str__(self):
-        return self.name
-
-    def __repr__(self):
-        return 'Node({})'.format(self.name)
+    owner = relationship("User", back_populates="notes")

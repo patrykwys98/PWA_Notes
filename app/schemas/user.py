@@ -1,7 +1,5 @@
 from pydantic import BaseModel
 
-from app.schemas.notebook import NotebookSchema
-
 
 class UserSchema(BaseModel):
     """
