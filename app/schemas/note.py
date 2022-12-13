@@ -9,8 +9,7 @@ class NoteSchema(BaseModel):
     """
     title: str
     content: str
-    notebook_id: int
-    childrens: Any = None
+    # childrens: Any = None
     child_id: int = None
 
     class Config:
@@ -25,7 +24,6 @@ class NoteAllSchema(BaseModel):
     title: str
     content: str
     notebook_id: int
-    children: Any = None
     child_id: int = None
 
     class Config:
@@ -38,7 +36,7 @@ class NotesToTreeSchema(BaseModel):
     """
     id: int
     title: str
-    children: Any = None
+    # children: bool = False
     child_id: int = None
 
     class Config:

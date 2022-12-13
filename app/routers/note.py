@@ -3,10 +3,10 @@ from sqlalchemy.orm import Session
 
 from app.db.get_db import get_db
 from app.models import User
-from app.schemas.note import NoteCreateSchema, NoteSchema
+from app.schemas.note import NoteCreateSchema, NoteSchema, NotesToTreeSchema
 from app.services.auth import get_current_user
 from app.services.note import (add_note, delete_note, get_note, get_notes_tree,
-                               update_note)
+                               update_note, update_tree_structure)
 
 router = APIRouter()
 
@@ -33,7 +33,7 @@ async def delete_note_endpoint(note_id: int, db: Session = Depends(get_db), user
 
 @router.put('/update-note/{note_id}')
 async def update_note_endpoint(note_id: int, note: NoteSchema, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
-    return await update_note(db=db, note_id=note_id, note=note)
+    return await update_note(db=db, note_id=note_id, note=note, user=user)
 
 
 # @router.get('/get-childrens/{note_id}')
@@ -45,3 +45,8 @@ async def update_note_endpoint(note_id: int, note: NoteSchema, db: Session = Dep
 async def get_notes_with_childrens_endpoint(db: Session = Depends(get_db), user: User = Depends(get_current_user)):
     notes = await get_notes_tree(db=db, user=user)
     return notes
+
+
+@router.post('/update-tree-structure/')
+async def update_tree_structure_endpoint(q: list[NotesToTreeSchema], db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+    return await update_tree_structure(db=db, q=q, user=user)
