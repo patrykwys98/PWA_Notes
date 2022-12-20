@@ -16,13 +16,6 @@ async def add_note(db: Session, note: NoteSchema, user: UserSchema):
     return db_note
 
 
-# async def get_notes(db: Session, ):
-#     notes = db.query(Note).filter().all()
-#     if not notes:
-#         return []
-#     return notes
-
-
 async def get_note(db: Session, note_id: int, user: UserSchema):
     note = db.query(Note).filter(
         and_(Note.id == note_id, Note.owner_id == user.id)).first()
@@ -32,6 +25,10 @@ async def get_note(db: Session, note_id: int, user: UserSchema):
 async def delete_note(db: Session, note_id: int, user: UserSchema):
     note = db.query(Note).filter(
         and_(Note.id == note_id, user.id == user.id)).first()
+    childrens = db.query(Note).filter(Note.child_id == note_id).all()
+    if childrens:
+        for child in childrens:
+            child.child_id = None
     db.delete(note)
     db.commit()
     return note
@@ -42,28 +39,21 @@ async def update_note(db: Session, note_id: int, note: NoteSchema, user: UserSch
         and_(Note.id == note_id, Note.owner_id == user.id)).first()
     db_note.title = note.title
     db_note.content = note.content
-    # db_note.children = note.children
     db_note.child_id = note.child_id
     db.commit()
     db.refresh(db_note)
     return db_note
 
+async def rename_note(db: Session, note_id: int, title: str, user: UserSchema):
+    db_note = db.query(Note).filter(
+        and_(Note.id == note_id, Note.owner_id == user.id)).first()
+    db_note.title = title
+    db.commit()
+    db.refresh(db_note)
+    return db_note
 
 async def get_notes_tree(db: Session, user: UserSchema):
     notes = db.query(Note).filter(Note.owner_id == user.id).all()
-    # notes_to_return = []
-    # childs_ids = []
-    # if not notes:
-    #     return []
-    # for note in notes:
-    #     childrens = [child for child in notes if child.child_id == note.id]
-    #     if childrens:
-    #         for child in childrens:
-    #             childs_ids.append(child.id)
-    #     note.children = childrens
-    #     if note.id not in childs_ids:
-    #         notes_to_return.append(note)
-
     return list(map(lambda x: NotesToTreeSchema.from_orm(x), notes))
 
 

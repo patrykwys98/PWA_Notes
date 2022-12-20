@@ -45,5 +45,9 @@ class NotesToTreeSchema(BaseModel):
 
 class NoteCreateSchema(BaseModel):
     title: str
-    content: str
+    content: str = None
     child_id: int = None
+
+
+class NoteRenameSchema(BaseModel):
+    title: str
