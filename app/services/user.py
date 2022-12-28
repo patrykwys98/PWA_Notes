@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 import app.services.auth as auth
 from app.models.user import User
 from app.schemas.user import CreateUserSchema
+from app.schemas.user import UserSchema
 
 
 async def get_user(db: Session, username: str):
@@ -44,5 +45,6 @@ async def get_user_by_id(db: Session, user_id: int):
     return db.query(User).filter(User.id == user_id).first()
 
 
-async def get_users_for_share(db: Session, skip: int = 0, limit: int = 100, user: User = None):
-    return db.query(User).offset(skip).limit(limit).all()
+async def get_users_for_share(db: Session,  user: UserSchema, skip: int = 0, limit: int = 100):
+    users =  db.query(User).offset(skip).limit(limit).all()
+    return list(filter(lambda x: x.id != user.id, users))

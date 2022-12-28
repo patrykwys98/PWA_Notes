@@ -5,8 +5,6 @@ class ShareNoteBaseSchema(BaseModel):
     can_edit: bool | None = False
     can_delete: bool | None = False
     can_share: bool | None = False
-    public: bool | None = False
-    with_childs : bool | None = False
 
     class Config:
         orm_mode = True

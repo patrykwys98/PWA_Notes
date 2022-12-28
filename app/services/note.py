@@ -3,9 +3,9 @@ from sqlalchemy import and_, func, or_
 from sqlalchemy.orm import Session
 
 from app.models.note import Note
-from app.models.share import Share
 from app.schemas.note import NoteSchema, NotesAndSharedNotesSchema, NotesToTreeSchema, SharedNoteSchema
 from app.schemas.user import UserSchema
+from app.models.share import Share
 
 
 async def add_note(db: Session, note: NoteSchema, user: UserSchema):
@@ -26,6 +26,11 @@ async def get_note(db: Session, note_id: int, user: UserSchema):
 async def delete_note(db: Session, note_id: int, user: UserSchema):
     note = db.query(Note).filter(
         and_(Note.id == note_id, user.id == user.id)).first()
+    shared = db.query(Share).filter(Share.note_id == note_id).all()
+    if shared:
+        for share in shared:
+            db.delete(share)
+    note.shared = []
     childrens = db.query(Note).filter(Note.child_id == note_id).all()
     if childrens:
         for child in childrens:

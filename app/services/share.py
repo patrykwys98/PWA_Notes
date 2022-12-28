@@ -1,5 +1,7 @@
 from sqlalchemy.orm import Session
 from fastapi import Depends, HTTPException, status
+from app.models.user import User
+from app.schemas.user import UserSchema
 
 from app.models.share import Share
 from app.schemas.share import ShareNoteGetSchema

@@ -12,14 +12,12 @@ class Share(Base):
     can_edit = Column(Boolean, default=False)
     can_delete = Column(Boolean, default=False)
     can_share = Column(Boolean, default=False)
-    public = Column(Boolean, default=False)
-    with_childs = Column(Boolean, default=False)
     time_created = Column(DateTime(timezone=True), server_default=func.now())
     time_updated = Column(DateTime(timezone=True), onupdate=func.now(), nullable=True)
 
     
 
-    note = relationship("Note", back_populates="shared")
+    note = relationship("Note", back_populates="shared", cascade="all, delete")
     user = relationship("User", back_populates="shared")
 
 

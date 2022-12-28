@@ -4,6 +4,8 @@ from sqlalchemy.orm import Session
 from app.db.get_db import get_db
 from app.services.share import share_note
 from app.schemas.share import ShareNoteCreateSchema
+from app.services.auth import get_current_user
+from app.models import User
 
 router = APIRouter()
 

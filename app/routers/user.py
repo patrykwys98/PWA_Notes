@@ -18,9 +18,9 @@ async def create_user(user: CreateUserSchema, db: Session = Depends(get_db)):
     return await UserService.create_user(db=db, user=user)
 
 
-@router.get("/get-users-for-share/", response_model=list[UserForShareNoteSchema],
-)
+@router.get("/get-users-for-share/", response_model=list[UserForShareNoteSchema])
 async def get_users_for_share(
     db: Session = Depends(get_db),
+    user: User = Depends(get_current_user)
  ):
-    return await UserService.get_users_for_share(db=db)
+    return await UserService.get_users_for_share(db=db, user=user)
