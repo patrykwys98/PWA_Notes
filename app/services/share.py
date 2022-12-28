@@ -1,16 +1,21 @@
-from sqlalchemy.orm import Session
 from fastapi import Depends, HTTPException, status
-from app.models.user import User
-from app.schemas.user import UserSchema
+from sqlalchemy import and_, or_
+from sqlalchemy.orm import Session
 
 from app.models.share import Share
+from app.models.user import User
 from app.schemas.share import ShareNoteGetSchema
-from sqlalchemy import and_, or_
+from app.schemas.user import UserSchema
 
-async def share_note(shared_note: ShareNoteGetSchema, db: Session):
+
+async def share_note(shared_note: ShareNoteGetSchema, db: Session, user: UserSchema):
     """
     TODO: DONT SHARE TO YOURSELF AND MAKE IT EASIEST
     """
+    can_share = db.query(Share).filter(and_(Share.note_id == shared_note.note_id, Share.user_id == user.id)).first()
+    if not can_share:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
+                            detail="You can't share this note")
     if type(shared_note.user_id) is list:
         for user_id in shared_note.user_id:
             duplicate = db.query(Share).filter(and_(Share.note_id == shared_note.note_id, Share.user_id == user_id)).first()

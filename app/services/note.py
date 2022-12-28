@@ -3,9 +3,10 @@ from sqlalchemy import and_, func, or_
 from sqlalchemy.orm import Session
 
 from app.models.note import Note
-from app.schemas.note import NoteSchema, NotesAndSharedNotesSchema, NotesToTreeSchema, SharedNoteSchema
-from app.schemas.user import UserSchema
 from app.models.share import Share
+from app.schemas.note import (NotesAndSharedNotesSchema, NoteSchema,
+                              NotesToTreeSchema, SharedNoteSchema)
+from app.schemas.user import UserSchema
 
 
 async def add_note(db: Session, note: NoteSchema, user: UserSchema):
@@ -19,11 +20,12 @@ async def add_note(db: Session, note: NoteSchema, user: UserSchema):
 
 async def get_note(db: Session, note_id: int, user: UserSchema):
     note = db.query(Note).filter(
-        and_(Note.id == note_id, Note.owner_id == user.id)).first()
+        and_(Note.id == note_id, or_(Note.owner_id == user.id, Share.user_id == user.id))).first()
     return note
 
 
 async def delete_note(db: Session, note_id: int, user: UserSchema):
+    can_delete = db.query(Share).filter(Note.id == note_id, Share.user_id == user.id, Share.can_delete == True).first()
     note = db.query(Note).filter(
         and_(Note.id == note_id, user.id == user.id)).first()
     shared = db.query(Share).filter(Share.note_id == note_id).all()
@@ -41,8 +43,12 @@ async def delete_note(db: Session, note_id: int, user: UserSchema):
 
 
 async def update_note(db: Session, note_id: int, note: NoteSchema, user: UserSchema):
+    can_edit = db.query(Share).filter(Note.id == note_id, Share.user_id == user.id, Share.can_edit == True).first()
+    if not can_edit:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
+                            detail="You can't edit this note")
     db_note = db.query(Note).filter(
-        and_(Note.id == note_id, Note.owner_id == user.id)).first()
+        and_(Note.id == note_id, or_(Note.owner_id == user.id, Share.user_id == user.id))).first()
     db_note.title = note.title
     db_note.content = note.content
     db_note.child_id = note.child_id
@@ -51,6 +57,7 @@ async def update_note(db: Session, note_id: int, note: NoteSchema, user: UserSch
     return db_note
 
 async def rename_note(db: Session, note_id: int, title: str, user: UserSchema):
+    can_edit = db.query(Share).filter(Note.id == note_id, Share.user_id == user.id, Share.can_edit == True).first()
     db_note = db.query(Note).filter(
         and_(Note.id == note_id, Note.owner_id == user.id)).first()
     db_note.title = title

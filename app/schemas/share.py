@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 
+
 class ShareNoteBaseSchema(BaseModel):
     note_id: int | None = None
     can_edit: bool | None = False

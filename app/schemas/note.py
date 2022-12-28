@@ -4,6 +4,7 @@ from pydantic import BaseModel
 
 from app.schemas.share import ShareNoteGetSchema
 
+
 class NoteSchema(BaseModel):
     """
     Base Note Schema
