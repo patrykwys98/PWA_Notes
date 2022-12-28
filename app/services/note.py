@@ -3,7 +3,8 @@ from sqlalchemy import and_, func, or_
 from sqlalchemy.orm import Session
 
 from app.models.note import Note
-from app.schemas.note import NoteSchema, NotesToTreeSchema
+from app.models.share import Share
+from app.schemas.note import NoteSchema, NotesAndSharedNotesSchema, NotesToTreeSchema, SharedNoteSchema
 from app.schemas.user import UserSchema
 
 
@@ -54,7 +55,18 @@ async def rename_note(db: Session, note_id: int, title: str, user: UserSchema):
 
 async def get_notes_tree(db: Session, user: UserSchema):
     notes = db.query(Note).filter(Note.owner_id == user.id).all()
+    shared_notes = db.query(Note).filter(Note.shared.any(user_id=user.id)).all()
     return list(map(lambda x: NotesToTreeSchema.from_orm(x), notes))
+
+
+async def get_notes_and_shared_notes(db: Session, user: UserSchema):
+    notes = db.query(Note).filter(Note.owner_id == user.id).all()
+    shared_notes = db.query(Note).filter(Note.shared.any(user_id=user.id)).all()
+    notes = list(map(lambda x: NotesToTreeSchema.from_orm(x), notes))
+    shared_notes = list(map(lambda x: SharedNoteSchema.from_orm(x), shared_notes))
+
+    return NotesAndSharedNotesSchema(notes=notes, shared=shared_notes)
+
 
 
 async def update_tree_structure(db: Session, q: list[NotesToTreeSchema], user: UserSchema):

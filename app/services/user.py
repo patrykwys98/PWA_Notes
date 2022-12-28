@@ -42,3 +42,7 @@ async def update_user(db: Session, user_id: int, user: CreateUserSchema):
 
 async def get_user_by_id(db: Session, user_id: int):
     return db.query(User).filter(User.id == user_id).first()
+
+
+async def get_users_for_share(db: Session, skip: int = 0, limit: int = 100, user: User = None):
+    return db.query(User).offset(skip).limit(limit).all()

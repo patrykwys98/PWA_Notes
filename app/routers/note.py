@@ -6,7 +6,7 @@ from app.models import User
 from app.schemas.note import NoteCreateSchema, NoteSchema, NotesToTreeSchema, NoteRenameSchema
 from app.services.auth import get_current_user
 from app.services.note import (add_note, delete_note, get_note, get_notes_tree,
-                               update_note, update_tree_structure, rename_note)
+                               update_note, update_tree_structure, rename_note, get_notes_and_shared_notes)
 
 router = APIRouter()
 
@@ -42,3 +42,8 @@ async def update_tree_structure_endpoint(q: list[NotesToTreeSchema], db: Session
 @router.put('/rename-note/{note_id}/')
 async def rename_note_endpoint(note_id: int, title: NoteRenameSchema, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
     return await rename_note(db=db, note_id=note_id, title=title.title, user=user)
+
+
+@router.get('/get-notes-and-shared-notes/')
+async def get_notes_and_shared_notes_endpoint(db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+    return await get_notes_and_shared_notes(db=db, user=user)

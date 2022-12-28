@@ -24,3 +24,14 @@ class AuthUserSchema(UserSchema):
     Auth user schema (with password)
     """
     password: str
+
+
+class UserForShareNoteSchema(BaseModel):
+    """
+    User Base Schema
+    """
+    id: int
+    email: str
+
+    class Config:
+        orm_mode = True

@@ -2,6 +2,7 @@ from typing import Any
 
 from pydantic import BaseModel
 
+from app.schemas.share import ShareNoteGetSchema
 
 class NoteSchema(BaseModel):
     """
@@ -23,7 +24,6 @@ class NoteAllSchema(BaseModel):
     id: int
     title: str
     content: str
-    notebook_id: int
     child_id: int = None
 
     class Config:
@@ -51,3 +51,24 @@ class NoteCreateSchema(BaseModel):
 
 class NoteRenameSchema(BaseModel):
     title: str
+
+
+class SharedNoteSchema(BaseModel):
+    """
+    Base Note Schema
+    """
+    id: int
+    title: str
+    child_id: int = None
+    shared: ShareNoteGetSchema
+
+    class Config:
+        orm_mode = True
+
+
+class NotesAndSharedNotesSchema(BaseModel):
+    notes: list[NotesToTreeSchema]
+    shared: list[SharedNoteSchema] | None = None
+
+    class Config:
+        orm_mode = True

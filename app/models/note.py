@@ -3,7 +3,7 @@ from sqlalchemy import (Column, DateTime, ForeignKey, Index, Integer, Sequence,
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
-from app.db.database import Base, engine
+from app.db.database import Base
 
 
 class Note(Base):
@@ -19,3 +19,4 @@ class Note(Base):
     children = relationship('Note', remote_side=[id], uselist=True)
 
     owner = relationship("User", back_populates="notes")
+    shared = relationship('Share', back_populates="note")
