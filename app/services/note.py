@@ -19,13 +19,18 @@ async def add_note(db: Session, note: NoteSchema, user: UserSchema):
 
 
 async def get_note(db: Session, note_id: int, user: UserSchema):
+    is_shared_for_user = db.query(Share).filter(Share.note_id == note_id, Share.user_id == user.id).first()
+    is_owner = db.query(Note).filter(Note.id == note_id, Note.owner_id == user.id).first()
+    if not is_shared_for_user and not is_owner:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
+                            detail="You can't access this note")
     note = db.query(Note).filter(
-        and_(Note.id == note_id, or_(Note.owner_id == user.id, Share.user_id == user.id))).first()
+        and_(Note.id == note_id, user.id == user.id)).first()
+    print(note)
     return note
 
 
 async def delete_note(db: Session, note_id: int, user: UserSchema):
-    can_delete = db.query(Share).filter(Note.id == note_id, Share.user_id == user.id, Share.can_delete == True).first()
     note = db.query(Note).filter(
         and_(Note.id == note_id, user.id == user.id)).first()
     shared = db.query(Share).filter(Share.note_id == note_id).all()
@@ -43,8 +48,9 @@ async def delete_note(db: Session, note_id: int, user: UserSchema):
 
 
 async def update_note(db: Session, note_id: int, note: NoteSchema, user: UserSchema):
-    can_edit = db.query(Share).filter(Note.id == note_id, Share.user_id == user.id, Share.can_edit == True).first()
-    if not can_edit:
+    can_edit = db.query(Share).filter(Share.note_id == note_id, Share.user_id == user.id, Share.can_edit == True).first()
+    is_owner = db.query(Note).filter(Note.id == note_id, Note.owner_id == user.id).first()
+    if not can_edit or not is_owner:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
                             detail="You can't edit this note")
     db_note = db.query(Note).filter(
@@ -65,6 +71,7 @@ async def rename_note(db: Session, note_id: int, title: str, user: UserSchema):
     db.refresh(db_note)
     return db_note
 
+#TODO: REMOVE THAT POTENTIALLY
 async def get_notes_tree(db: Session, user: UserSchema):
     notes = db.query(Note).filter(Note.owner_id == user.id).all()
     shared_notes = db.query(Note).filter(Note.shared.any(user_id=user.id)).all()

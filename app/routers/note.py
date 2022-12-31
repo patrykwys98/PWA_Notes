@@ -34,8 +34,7 @@ async def update_note_endpoint(note_id: int, note: NoteSchema, db: Session = Dep
 
 @router.get('/get-notes-with-childrens/')
 async def get_notes_with_childrens_endpoint(db: Session = Depends(get_db), user: User = Depends(get_current_user)):
-    notes = await get_notes_tree(db=db, user=user)
-    return notes
+    return await get_notes_tree(db=db, user=user)
 
 @router.post('/update-tree-structure/')
 async def update_tree_structure_endpoint(q: list[NotesToTreeSchema], db: Session = Depends(get_db), user: User = Depends(get_current_user)):

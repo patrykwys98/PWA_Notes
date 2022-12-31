@@ -10,6 +10,7 @@ class Share(Base):
     __tablename__ = 'share'
     note_id = Column(Integer, ForeignKey("note.id"), primary_key=True)
     user_id = Column(Integer, ForeignKey("user.id"), primary_key=True)
+    can_view = Column(Boolean, default=False)
     can_edit = Column(Boolean, default=False)
     can_delete = Column(Boolean, default=False)
     can_share = Column(Boolean, default=False)
