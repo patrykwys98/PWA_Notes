@@ -7,8 +7,9 @@ from app.schemas.note import (NoteCreateSchema, NoteRenameSchema, NoteSchema,
                               NotesToTreeSchema)
 from app.services.auth import get_current_user
 from app.services.note import (add_note, delete_note, get_note,
-                               get_notes_and_shared_notes, get_notes_tree,
-                               rename_note, update_note, update_tree_structure)
+                               get_notes_and_shared_notes, rename_note,
+                               search_in_title_and_content, update_note,
+                               update_tree_structure)
 
 router = APIRouter()
 
@@ -32,9 +33,6 @@ async def delete_note_endpoint(note_id: int, db: Session = Depends(get_db), user
 async def update_note_endpoint(note_id: int, note: NoteSchema, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
     return await update_note(db=db, note_id=note_id, note=note, user=user)
 
-@router.get('/get-notes-with-childrens/')
-async def get_notes_with_childrens_endpoint(db: Session = Depends(get_db), user: User = Depends(get_current_user)):
-    return await get_notes_tree(db=db, user=user)
 
 @router.post('/update-tree-structure/')
 async def update_tree_structure_endpoint(q: list[NotesToTreeSchema], db: Session = Depends(get_db), user: User = Depends(get_current_user)):
@@ -48,3 +46,7 @@ async def rename_note_endpoint(note_id: int, title: NoteRenameSchema, db: Sessio
 @router.get('/get-notes-and-shared-notes/')
 async def get_notes_and_shared_notes_endpoint(db: Session = Depends(get_db), user: User = Depends(get_current_user)):
     return await get_notes_and_shared_notes(db=db, user=user)
+
+@router.get('/search-in-title-and-content/{query}/')
+async def search_in_title_and_content_endpoint(query: str, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+    return await search_in_title_and_content(db=db, query=query, user=user)

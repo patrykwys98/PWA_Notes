@@ -11,8 +11,9 @@ class NoteSchema(BaseModel):
     """
     title: str
     content: str
-    # childrens: Any = None
     child_id: int = None
+    tags: str = None
+
 
     class Config:
         orm_mode = True
@@ -25,6 +26,7 @@ class NoteAllSchema(BaseModel):
     id: int
     title: str
     content: str
+    tags: str = None
     child_id: int = None
 
     class Config:

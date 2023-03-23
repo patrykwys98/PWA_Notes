@@ -8,6 +8,7 @@ from app.schemas.share import ShareNoteGetSchema, UnshareNoteSchema
 from app.schemas.user import UserSchema
 from app.utils.share import not_owner_and_not_can_share
 
+
 async def share_note(shared_note: ShareNoteGetSchema, db: Session, user: UserSchema):
     if not_owner_and_not_can_share(db, user.id, shared_note.note_id):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,

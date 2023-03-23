@@ -20,7 +20,6 @@ app.include_router(user.router, tags=['User'], prefix='/api/user')
 app.include_router(auth.router, tags=['Auth'], prefix='/api/auth')
 app.include_router(share.router, tags=['Share'], prefix='/api/share')
 
-
 @app.get("/")
 async def root():
     return {'message': 'Hello world'}

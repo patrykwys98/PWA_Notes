@@ -1,3 +1,4 @@
+
 from fastapi import HTTPException, status
 from sqlalchemy import and_, func, or_
 from sqlalchemy.orm import Session
@@ -7,6 +8,8 @@ from app.models.share import Share
 from app.schemas.note import (NotesAndSharedNotesSchema, NoteSchema,
                               NotesToTreeSchema, SharedNoteSchema)
 from app.schemas.user import UserSchema
+from app.utils.note import (not_owner_and_not_can_delete,
+                            not_owner_and_not_can_edit)
 
 
 async def add_note(db: Session, note: NoteSchema, user: UserSchema):
@@ -26,11 +29,13 @@ async def get_note(db: Session, note_id: int, user: UserSchema):
                             detail="You can't access this note")
     note = db.query(Note).filter(
         and_(Note.id == note_id, user.id == user.id)).first()
-    print(note)
     return note
 
 
 async def delete_note(db: Session, note_id: int, user: UserSchema):
+    if not_owner_and_not_can_delete(db, user.id, note_id):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
+                            detail="You can't delete this note")
     note = db.query(Note).filter(
         and_(Note.id == note_id, user.id == user.id)).first()
     shared = db.query(Share).filter(Share.note_id == note_id).all()
@@ -48,13 +53,10 @@ async def delete_note(db: Session, note_id: int, user: UserSchema):
 
 
 async def update_note(db: Session, note_id: int, note: NoteSchema, user: UserSchema):
-    can_edit = db.query(Share).filter(Share.note_id == note_id, Share.user_id == user.id, Share.can_edit == True).first()
-    is_owner = db.query(Note).filter(Note.id == note_id, Note.owner_id == user.id).first()
-    if not can_edit or not is_owner:
+    if not_owner_and_not_can_edit(db, user.id, note_id):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
                             detail="You can't edit this note")
-    db_note = db.query(Note).filter(
-        and_(Note.id == note_id, or_(Note.owner_id == user.id, Share.user_id == user.id))).first()
+    db_note = db.query(Note).filter(and_(Note.id == note_id, user.id == user.id)).first()
     db_note.title = note.title
     db_note.content = note.content
     db_note.child_id = note.child_id
@@ -63,19 +65,15 @@ async def update_note(db: Session, note_id: int, note: NoteSchema, user: UserSch
     return db_note
 
 async def rename_note(db: Session, note_id: int, title: str, user: UserSchema):
-    can_edit = db.query(Share).filter(Note.id == note_id, Share.user_id == user.id, Share.can_edit == True).first()
+    if not_owner_and_not_can_edit(db, user.id, note_id):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
+                            detail="You can't edit this note")
     db_note = db.query(Note).filter(
         and_(Note.id == note_id, Note.owner_id == user.id)).first()
     db_note.title = title
     db.commit()
     db.refresh(db_note)
     return db_note
-
-#TODO: REMOVE THAT POTENTIALLY
-async def get_notes_tree(db: Session, user: UserSchema):
-    notes = db.query(Note).filter(Note.owner_id == user.id).all()
-    shared_notes = db.query(Note).filter(Note.shared.any(user_id=user.id)).all()
-    return list(map(lambda x: NotesToTreeSchema.from_orm(x), notes))
 
 
 async def get_notes_and_shared_notes(db: Session, user: UserSchema):
@@ -96,3 +94,8 @@ async def update_tree_structure(db: Session, q: list[NotesToTreeSchema], user: U
         db.commit()
         db.refresh(db_note)
     return note
+
+async def search_in_title_and_content(db: Session, query: str, user: UserSchema):
+    notes = db.query(Note).filter(or_(Note.title.like(f"%{query}%"), Note.content.like(f"%{query}%"))).all()
+    notes = list(map(lambda x: NotesToTreeSchema.from_orm(x), notes))
+    return notes
