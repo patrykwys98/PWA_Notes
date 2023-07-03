@@ -1,8 +1,8 @@
-"""shared notes
+"""adding tag 3
 
-Revision ID: 0712b8e1581f
-Revises: 3b0bc15b1a67
-Create Date: 2022-12-28 15:49:42.150638
+Revision ID: f66814d97697
+Revises: 17b31a1febbb
+Create Date: 2023-03-20 16:46:12.269204
 
 """
 from alembic import op
@@ -11,8 +11,8 @@ import sqlalchemy_utils
 
 
 # revision identifiers, used by Alembic.
-revision = '0712b8e1581f'
-down_revision = '3b0bc15b1a67'
+revision = 'f66814d97697'
+down_revision = '17b31a1febbb'
 branch_labels = None
 depends_on = None
 

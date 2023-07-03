@@ -2,8 +2,7 @@ from sqlalchemy.orm import Session
 
 import app.services.auth as auth
 from app.models.user import User
-from app.schemas.user import CreateUserSchema
-from app.schemas.user import UserSchema
+from app.schemas.user import CreateUserSchema, UserSchema
 
 
 async def get_user(db: Session, username: str):
