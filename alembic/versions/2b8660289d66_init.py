@@ -1,17 +1,17 @@
-"""New Migration
+"""init
 
-Revision ID: a55ba379778f
+Revision ID: 2b8660289d66
 Revises: 
-Create Date: 2022-12-30 19:53:28.975960
+Create Date: 2023-07-03 16:49:50.220037
 
 """
+from alembic import op
 import sqlalchemy as sa
 import sqlalchemy_utils
 
-from alembic import op
 
 # revision identifiers, used by Alembic.
-revision = 'a55ba379778f'
+revision = '2b8660289d66'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -45,6 +45,7 @@ def upgrade() -> None:
     op.create_table('share',
     sa.Column('note_id', sa.Integer(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.Column('can_view', sa.Boolean(), nullable=True),
     sa.Column('can_edit', sa.Boolean(), nullable=True),
     sa.Column('can_delete', sa.Boolean(), nullable=True),
     sa.Column('can_share', sa.Boolean(), nullable=True),

@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.routers import auth, note, share, user
 
 app = FastAPI()
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -14,7 +15,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-#! Routes
+# Routes
 app.include_router(note.router, tags=['Note'], prefix='/api/note')
 app.include_router(user.router, tags=['User'], prefix='/api/user')
 app.include_router(auth.router, tags=['Auth'], prefix='/api/auth')

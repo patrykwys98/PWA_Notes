@@ -1,4 +1,4 @@
-from typing import Any
+from typing import List, Optional
 
 from pydantic import BaseModel
 
@@ -6,41 +6,30 @@ from app.schemas.share import ShareNoteGetSchema
 
 
 class NoteSchema(BaseModel):
-    """
-    Base Note Schema
-    """
     title: str
     content: str
-    child_id: int = None
-    tags: str = None
-
+    child_id: Optional[int] = None
+    tags: Optional[str] = None
 
     class Config:
         orm_mode = True
 
 
 class NoteAllSchema(BaseModel):
-    """
-    Base Note Schema
-    """
     id: int
     title: str
     content: str
-    tags: str = None
-    child_id: int = None
+    tags: Optional[str] = None
+    child_id: Optional[int] = None
 
     class Config:
         orm_mode = True
 
 
 class NotesToTreeSchema(BaseModel):
-    """
-    Base Note Schema
-    """
     id: int
     title: str
-    # children: bool = False
-    child_id: int = None
+    child_id: Optional[int] = None
 
     class Config:
         orm_mode = True
@@ -48,8 +37,8 @@ class NotesToTreeSchema(BaseModel):
 
 class NoteCreateSchema(BaseModel):
     title: str
-    content: str = None
-    child_id: int = None
+    content: Optional[str] = None
+    child_id: Optional[int] = None
 
 
 class NoteRenameSchema(BaseModel):
@@ -57,12 +46,9 @@ class NoteRenameSchema(BaseModel):
 
 
 class SharedNoteSchema(BaseModel):
-    """
-    Base Note Schema
-    """
     id: int
     title: str
-    child_id: int = None
+    child_id: Optional[int] = None
     shared: ShareNoteGetSchema
 
     class Config:
@@ -70,8 +56,8 @@ class SharedNoteSchema(BaseModel):
 
 
 class NotesAndSharedNotesSchema(BaseModel):
-    notes: list[NotesToTreeSchema]
-    shared: list[SharedNoteSchema] | None = None
+    notes: List[NotesToTreeSchema]
+    shared: Optional[List[SharedNoteSchema]] = None
 
     class Config:
         orm_mode = True
