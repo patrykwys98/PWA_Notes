@@ -5,3 +5,4 @@ docker-compose.yml
 Docker
 .dockerignore
 envs.js
+.DS_Store
