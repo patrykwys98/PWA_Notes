@@ -1,5 +1,7 @@
-from pydantic import BaseModel
 from typing import List, Optional
+
+from pydantic import BaseModel
+
 
 class ShareNoteBaseSchema(BaseModel):
     note_id: Optional[int] = None

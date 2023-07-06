@@ -1,4 +1,5 @@
-from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Index, Integer, Sequence
+from sqlalchemy import (Boolean, Column, DateTime, ForeignKey, Index, Integer,
+                        Sequence)
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 

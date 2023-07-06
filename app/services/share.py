@@ -9,7 +9,11 @@ from app.schemas.user import UserSchema
 from app.utils.share import not_owner_and_not_can_share
 
 
-async def share_note(shared_note: ShareNoteGetSchema, db: Session, user: UserSchema) -> dict:
+async def share_note(
+    shared_note: ShareNoteGetSchema,
+    db: Session,
+    user: UserSchema
+) -> dict:
     if not_owner_and_not_can_share(db, user.id, shared_note.note_id):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -34,7 +38,11 @@ async def share_note(shared_note: ShareNoteGetSchema, db: Session, user: UserSch
     return {'message': 'Note shared'}
 
 
-async def get_share_info_about_note(db: Session, note_id: int, user: UserSchema):
+async def get_share_info_about_note(
+    db: Session,
+    note_id: int,
+    user: UserSchema
+):
     if not_owner_and_not_can_share(db, user.id, note_id):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -46,7 +54,10 @@ async def get_share_info_about_note(db: Session, note_id: int, user: UserSchema)
     return db_query
 
 
-async def unshare_note_for_user(shared_note: UnshareNoteSchema, db: Session, user: UserSchema) -> dict:
+async def unshare_note_for_user(
+    shared_note: UnshareNoteSchema,
+    db: Session, user: UserSchema
+) -> dict:
     if not_owner_and_not_can_share(db, user.id, shared_note.note_id):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -67,7 +78,10 @@ async def unshare_note_for_user(shared_note: UnshareNoteSchema, db: Session, use
     return {'message': 'Note unshared'}
 
 
-async def update_share_note_for_user(shared_note: UnshareNoteSchema, db: Session, user: UserSchema) -> dict:
+async def update_share_note_for_user(
+    shared_note: UnshareNoteSchema,
+    db: Session, user: UserSchema
+) -> dict:
     if not_owner_and_not_can_share(db, user.id, shared_note.note_id):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,

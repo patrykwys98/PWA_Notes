@@ -3,7 +3,8 @@ from sqlalchemy.orm import Session
 
 from app.db.get_db import get_db
 from app.models import User
-from app.schemas.user import CreateUserSchema, UserForShareNoteSchema, UserSchema
+from app.schemas.user import (CreateUserSchema, UserForShareNoteSchema,
+                              UserSchema)
 from app.services import user as UserService
 from app.services.auth import get_current_user
 

@@ -1,15 +1,14 @@
 from fastapi import APIRouter, Depends, HTTPException, Response, status
 from sqlalchemy.orm import Session
+
 from app.db.get_db import get_db
 from app.models import User
-from app.schemas.share import (
-    ShareNoteCreateSchema, ShareNoteUpdateSchema, UnshareNoteSchema
-)
+from app.schemas.share import (ShareNoteCreateSchema, ShareNoteUpdateSchema,
+                               UnshareNoteSchema)
 from app.services.auth import get_current_user
-from app.services.share import (
-    get_share_info_about_note, share_note,
-    unshare_note_for_user, update_share_note_for_user
-)
+from app.services.share import (get_share_info_about_note, share_note,
+                                unshare_note_for_user,
+                                update_share_note_for_user)
 
 router = APIRouter()
 

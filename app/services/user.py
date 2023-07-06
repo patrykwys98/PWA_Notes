@@ -46,6 +46,11 @@ async def get_user_by_id(db: Session, user_id: int) -> User:
     return db.query(User).filter(User.id == user_id).first()
 
 
-async def get_users_for_share(db: Session, user: UserSchema, skip: int = 0, limit: int = 100) -> list[User]:
+async def get_users_for_share(
+    db: Session,
+    user: UserSchema,
+    skip: int = 0,
+    limit: int = 100
+) -> list[User]:
     users = db.query(User).offset(skip).limit(limit).all()
     return [u for u in users if u.id != user.id]
